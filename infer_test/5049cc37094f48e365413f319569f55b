@@ -1,0 +1,8 @@
+#include <stdio.h>
+
+int main()
+{
+	FILE *pFile = fopen("Test.c", "r");
+
+	return 0;	
+}
