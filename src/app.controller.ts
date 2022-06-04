@@ -3,50 +3,70 @@ import {
   Controller,
   Get,
   Header,
+  Param,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  FilesInterceptor,
+  AnyFilesInterceptor,
+  FileInterceptor,
+  FileFieldsInterceptor,
+} from '@nestjs/platform-express';
 import { AppService } from './app.service';
-import { fileDto } from './file.dto';
+import { fileDto } from './fileDto';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import fs from 'fs';
+import { promisify } from 'util';
+import { ApiImplicitFile } from '@nestjs/swagger/dist/decorators/api-implicit-file.decorator';
+import { diskStorage } from 'multer';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @ApiBody({ type: fileDto })
-  @Post('infer')
+  @Post('test')
   @Header('content-type', 'application/json')
-  async inferC(@Body() body: fileDto) {
-    console.log(body);
-    await this.appService.createFile(body);
+  async inferC(@Body() fileDto: fileDto) {
+    console.log(fileDto.name);
+    await this.appService.createFile(fileDto);
+    await this.appService.runInfer(fileDto.name);
   }
 
-  @Post('upload')
+  @Post('infer')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'name', maxCount: 1 },
+      { name: 'body', maxCount: 1 },
+    ]),
+  )
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        file: {
-          // 👈 this property
-          type: 'string',
-          format: 'binary',
-        },
+        name: { type: 'string' },
+        body: { type: 'string' },
       },
     },
   })
-  async upload(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
-  }
+  async infer(@Body() fileDto: fileDto) {
+    console.log(fileDto);
+    await this.appService.createFile(fileDto);
+    await this.appService.runInfer(fileDto.name);
+    const report = await this.appService.readResult();
 
-  @Get('get/test')
-  @Header('content-type', 'application/json')
-  async getFileDiagnostic() {
-    return this.appService.getFileDiagnostic();
+    return Object.assign({
+      files: [
+        {
+          filename: fileDto.name,
+          bug: report,
+        },
+      ],
+    });
   }
 
   @Get()
