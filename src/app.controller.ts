@@ -3,25 +3,13 @@ import {
   Controller,
   Get,
   Header,
-  Param,
   Post,
-  UploadedFile,
-  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  FilesInterceptor,
-  AnyFilesInterceptor,
-  FileInterceptor,
-  FileFieldsInterceptor,
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AppService } from './app.service';
 import { fileDto } from './fileDto';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
-import fs from 'fs';
-import { promisify } from 'util';
-import { ApiImplicitFile } from '@nestjs/swagger/dist/decorators/api-implicit-file.decorator';
-import { diskStorage } from 'multer';
 
 @Controller()
 export class AppController {
