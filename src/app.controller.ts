@@ -60,12 +60,16 @@ export class AppController {
     const report = await this.appService.readResult();
 
     return Object.assign({
-      files: [
-        {
-          filename: fileDto.name,
-          bug: report,
-        },
-      ],
+      ok: 200,
+      status: 'OK',
+      body: {
+        files: [
+          {
+            filename: fileDto.name,
+            bug: report,
+          },
+        ],
+      },
     });
   }
 
