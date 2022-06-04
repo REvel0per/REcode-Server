@@ -19,10 +19,14 @@ export class AppService {
 
   async runInfer(filename: string) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const exec = require('child_process').exec;
-    const infer_path = '~/Soyeon/infer/infer/bin/infer';
-    const options = '--pulse';
-    exec(`${infer_path} run ${options} -- clang -c ./infer_test/${filename}`);
+    const exec = promisify(require('child_process').exec);
+    const infer_path = '/usr/local/bin/infer';
+    const opt = '--pulse';
+    await exec(
+      `${infer_path} run ${opt} -- clang -c ./infer_test/${filename} -o ./infer_test/infer_${
+        filename.split('.')[0]
+      }`,
+    );
   }
 
   async readResult() {
