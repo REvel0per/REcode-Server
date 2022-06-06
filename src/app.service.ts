@@ -3,6 +3,7 @@ import { promisify } from 'util';
 import { writeFile } from 'fs';
 import { fileDto } from './fileDto';
 import * as fs from 'fs';
+import { err2json } from './util';
 
 @Injectable()
 export class AppService {
@@ -15,6 +16,13 @@ export class AppService {
     console.log(file);
     const write = promisify(writeFile);
     await write(`./infer_test/${file.name}`, file.body);
+  }
+
+  async createFile2(file: fileDto) {
+    console.log('test');
+    console.log(file);
+    const write = promisify(writeFile);
+    await write(`./norm/${file.name}`, file.body);
   }
 
   async runInfer(filename: string) {
@@ -33,5 +41,16 @@ export class AppService {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const report = fs.readFileSync('./infer-out/report.json', 'utf8');
     return report;
+  }
+
+  async runNorm(filename: string) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const exec = promisify(require('child_process').exec);
+    try {
+      await exec(`norminette norm/${filename} > ./norm-out/report.txt`);
+    } catch (error) {}
+    const result = err2json();
+    console.log(result);
+    return result;
   }
 }

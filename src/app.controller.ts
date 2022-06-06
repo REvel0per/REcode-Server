@@ -61,6 +61,41 @@ export class AppController {
     });
   }
 
+  @Post('norm')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'name', maxCount: 1 },
+      { name: 'body', maxCount: 1 },
+    ]),
+  )
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        body: { type: 'string' },
+      },
+    },
+  })
+  async norm(@Body() fileDto: fileDto) {
+    console.log(fileDto);
+    await this.appService.createFile2(fileDto);
+    const report = await this.appService.runNorm(fileDto.name);
+    return Object.assign({
+      ok: 200,
+      status: 'OK',
+      body: {
+        files: [
+          {
+            filename: fileDto.name,
+            bug: report,
+          },
+        ],
+      },
+    });
+  }
+
   @Get()
   getHello(): string {
     return this.appService.getHello();
