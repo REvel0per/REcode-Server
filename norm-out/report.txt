@@ -1,3 +1,0 @@
-norm/test.c: Error!
-Error: INVALID_HEADER       (line:   1, col:   1):	Missing or invalid 42 header
-Error: LINE_TOO_LONG        (line:   1, col:  65):	line too long
