@@ -29,7 +29,7 @@ export class AppService {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const exec = promisify(require('child_process').exec);
     const infer_path = '/usr/local/bin/infer';
-    const opt = '--pulse';
+    const opt = '--biabduction --bufferoverrun --liveness --pulse --uninit';
     await exec(
       `${infer_path} run ${opt} -- clang -c ./infer_test/${filename} -o ./infer_test/infer_${
         filename.split('.')[0]

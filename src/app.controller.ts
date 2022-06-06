@@ -45,7 +45,8 @@ export class AppController {
     console.log(fileDto);
     await this.appService.createFile(fileDto);
     await this.appService.runInfer(fileDto.name);
-    const report = await this.appService.readResult();
+    const report = JSON.parse(await this.appService.readResult());
+    const lint = await this.appService.runNorm(fileDto.name);
 
     return Object.assign({
       ok: 200,
@@ -55,6 +56,7 @@ export class AppController {
           {
             filename: fileDto.name,
             bug: report,
+            lint: lint,
           },
         ],
       },
@@ -89,7 +91,7 @@ export class AppController {
         files: [
           {
             filename: fileDto.name,
-            bug: report,
+            lint: report,
           },
         ],
       },
