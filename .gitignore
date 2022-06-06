@@ -37,3 +37,10 @@ lerna-debug.log*
 # infer
 /infer*
 *.o
+
+#norm
+/norm
+/norm-out
+
+# venv
+/venv
